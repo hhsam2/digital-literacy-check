@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>디지털 리터러시 셀프 진단</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2855de; --blue-soft:#eef2ff; --ink:#151a2d; --body:#4a5068; --muted:#9097ad; --line:#e9ecf5;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{min-height:100%}
+  body{font-family:"Noto Sans KR",system-ui,sans-serif;color:var(--ink);background:#f5f7ff;
+    -webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere;
+    display:flex;justify-content:center;padding:28px 16px 48px;position:relative;overflow-x:hidden}
+  body::before,body::after{content:"";position:fixed;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none}
+  body::before{width:420px;height:420px;background:#c7d6ff;top:-140px;left:-120px;opacity:.9}
+  body::after{width:380px;height:380px;background:#e3d9ff;bottom:-120px;right:-120px;opacity:.85}
+  main{position:relative;z-index:1;width:100%;max-width:440px}
+  .fade{animation:fade .35s cubic-bezier(.2,.7,.2,1)}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  .glass{background:rgba(255,255,255,.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.9);border-radius:32px;box-shadow:0 10px 40px rgba(40,70,160,.10)}
+
+  /* intro */
+  .intro{padding:40px 28px 28px;text-align:center}
+  .badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--blue);
+    background:var(--blue-soft);padding:6px 12px;border-radius:99px}
+  .badge i{width:6px;height:6px;border-radius:50%;background:var(--blue)}
+  .hero{position:relative;height:150px;margin:26px 0 8px}
+  .orb{position:absolute;left:50%;top:50%;width:112px;height:112px;margin:-56px 0 0 -56px;border-radius:36px;
+    background:linear-gradient(140deg,#4f7cf0,#8b7cf6);display:grid;place-items:center;
+    box-shadow:0 18px 40px rgba(79,124,240,.35);transform:rotate(-6deg)}
+  .orb svg{width:56px;height:56px;transform:rotate(6deg)}
+  .float{position:absolute;font-size:13px;font-weight:700;padding:8px 14px;border-radius:99px;background:#fff;
+    box-shadow:0 6px 18px rgba(40,70,160,.12);white-space:nowrap;animation:bob 4s ease-in-out infinite}
+  .float.f1{left:6%;top:10px;color:#2855de}
+  .float.f2{right:4%;top:44px;color:#6d5ce8;animation-delay:-1.3s}
+  .float.f3{left:14%;bottom:4px;color:#1e2f8f;animation-delay:-2.6s}
+  @keyframes bob{50%{transform:translateY(-6px)}}
+  h1{font-size:28px;font-weight:800;line-height:1.35;letter-spacing:-.03em;margin-top:18px}
+  h1 span{background:linear-gradient(90deg,#2855de,#7c6cf0);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lead{font-size:15px;line-height:1.75;color:var(--body);margin:12px 0 26px}
+  .meta{display:flex;justify-content:center;gap:8px;margin-bottom:16px}
+  .meta span{font-size:12.5px;color:var(--body);background:#f2f4fa;padding:6px 12px;border-radius:99px}
+  .btn{appearance:none;border:0;cursor:pointer;font:inherit;font-weight:700;font-size:16px;width:100%;
+    padding:17px;border-radius:18px;color:#fff;background:linear-gradient(120deg,#2855de,#5b7cf5);
+    box-shadow:0 10px 24px rgba(40,85,222,.28);transition:transform .1s, box-shadow .2s}
+  .btn:hover{box-shadow:0 14px 30px rgba(40,85,222,.36)}
+  .btn:active{transform:scale(.98)}
+  .btn.light{background:#fff;color:var(--ink);box-shadow:0 4px 14px rgba(40,70,160,.10)}
+  button:focus-visible{outline:3px solid #a9bfff;outline-offset:3px}
+
+  /* quiz */
+  .quiz{padding:26px 24px 30px}
+  .qtop{display:flex;align-items:center;justify-content:space-between}
+  .back{background:none;border:0;font:inherit;font-size:14px;color:var(--muted);cursor:pointer;padding:6px 2px}
+  .steps{display:flex;gap:6px}
+  .steps i{width:22px;height:6px;border-radius:99px;background:#e3e7f3;transition:background .3s,width .3s}
+  .steps i.done{background:#a9bfff}
+  .steps i.now{background:var(--blue);width:34px}
+  .qtag{display:inline-flex;align-items:center;gap:8px;margin-top:34px;font-size:13px;font-weight:700}
+  .qtag b{display:grid;place-items:center;width:28px;height:28px;border-radius:10px;color:#fff;font-size:13px}
+  .q{font-size:23px;font-weight:700;line-height:1.5;letter-spacing:-.02em;margin:14px 0 44px;min-height:104px}
+  .scale{display:flex;align-items:center;justify-content:space-between;padding:0 4px}
+  .pt{appearance:none;border:2px solid #d9dfee;background:#fff;border-radius:50%;cursor:pointer;
+    transition:transform .15s, background .15s, border-color .15s}
+  .pt:hover{transform:scale(1.08);border-color:#a9bfff}
+  .pt.s1,.pt.s5{width:52px;height:52px}
+  .pt.s2,.pt.s4{width:42px;height:42px}
+  .pt.s3{width:34px;height:34px}
+  .pt.s1,.pt.s2{border-color:#d7d9e3}
+  .pt.s4,.pt.s5{border-color:#b9cbff}
+  .pt.on{background:var(--blue);border-color:var(--blue);transform:scale(1.08);box-shadow:0 8px 18px rgba(40,85,222,.3)}
+  .pt.s1.on,.pt.s2.on{background:#8e95ab;border-color:#8e95ab;box-shadow:0 8px 18px rgba(80,90,120,.25)}
+  .pt.s3.on{background:#b6bfd8;border-color:#b6bfd8;box-shadow:none}
+  .ends{display:flex;justify-content:space-between;margin-top:14px;font-size:13px;font-weight:600}
+  .ends span:first-child{color:#8e95ab}
+  .ends span:last-child{color:var(--blue)}
+  .hint{text-align:center;font-size:12.5px;color:var(--muted);margin-top:34px}
+
+  /* result */
+  .tcard{border-radius:32px;padding:30px 26px 26px;color:#fff;position:relative;overflow:hidden;
+    box-shadow:0 20px 50px rgba(50,60,160,.28)}
+  .tcard::before{content:"";position:absolute;width:260px;height:260px;border-radius:50%;
+    background:rgba(255,255,255,.14);top:-110px;right:-80px}
+  .tcard::after{content:"";position:absolute;width:160px;height:160px;border-radius:50%;
+    background:rgba(255,255,255,.08);bottom:-60px;left:-40px}
+  .tcard > *{position:relative;z-index:1}
+  .tlabel{font-size:12.5px;font-weight:600;opacity:.85;letter-spacing:.02em}
+  .tcard{text-align:center}
+  .tchar{position:relative;width:190px;height:190px;margin:6px auto 6px}
+  .tchar::before{content:"";position:absolute;inset:18px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,255,255,.55) 0%,rgba(255,255,255,.12) 55%,rgba(255,255,255,0) 72%)}
+  .tchar svg{position:relative;width:100%;height:100%;animation:hop 3.2s ease-in-out infinite}
+  @keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  .tags{justify-content:center}
+  .tname{font-size:29px;font-weight:800;letter-spacing:-.03em;line-height:1.3}
+  .tdesc{font-size:15px;line-height:1.7;margin-top:10px;opacity:.95}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
+  .tags span{font-size:12.5px;font-weight:600;padding:6px 11px;border-radius:99px;background:rgba(255,255,255,.2)}
+  .meters{background:rgba(255,255,255,.96);border-radius:22px;padding:18px 18px 8px;margin-top:22px;color:var(--ink)}
+  .m{margin-bottom:14px}
+  .mh{display:flex;justify-content:space-between;align-items:baseline;font-size:13.5px;margin-bottom:7px}
+  .mh b{font-weight:700}
+  .mh small{color:var(--muted);font-weight:500;margin-left:6px}
+  .mh em{font-style:normal;font-weight:800;font-size:15px}
+  .track{height:10px;border-radius:99px;background:#eef1f8;overflow:hidden}
+  .fill{height:100%;border-radius:99px;width:0;transition:width .9s cubic-bezier(.2,.7,.2,1)}
+
+  .tip{padding:20px 22px;margin-top:14px}
+  .tip h3{font-size:14px;font-weight:700;color:var(--blue);display:flex;align-items:center;gap:6px}
+  .tip p{font-size:14.5px;line-height:1.75;color:var(--body);margin-top:6px}
+  .row{display:grid;grid-template-columns:1fr 1.4fr;gap:10px;margin-top:16px}
+  .note{text-align:center;font-size:12.5px;color:var(--muted);margin-top:12px;min-height:18px}
+
+  .all{padding:22px 18px 18px;margin-top:22px}
+  .all h2{font-size:16px;font-weight:800;padding:0 4px 14px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .mini{border-radius:20px;padding:14px;background:#f6f7fb;border:2px solid transparent;transition:transform .15s}
+  .mini.me{background:#fff;border-color:var(--blue);box-shadow:0 8px 20px rgba(40,85,222,.15)}
+  .mini{text-align:center}
+  .mi{width:76px;height:76px;margin:0 auto 6px;border-radius:50%;display:grid;place-items:center}
+  .mi svg{width:76px;height:76px}
+  .mini b{display:block;font-size:13.5px;font-weight:700;line-height:1.4}
+  .mini small{display:block;font-size:11.5px;color:var(--muted);margin-top:3px}
+  .mini .me-tag{color:var(--blue);font-weight:700}
+  .foot{text-align:center;font-size:11.5px;color:var(--muted);margin-top:18px;line-height:1.6}
+
+  @media (max-width:370px){ h1{font-size:24px} .q{font-size:20px} .tname{font-size:25px}
+    .pt.s1,.pt.s5{width:46px;height:46px} .pt.s2,.pt.s4{width:38px;height:38px} }
+  @media (prefers-reduced-motion:reduce){ .fade,.float,.tchar svg{animation:none} .fill{transition:none} }
+</style>
+</head>
+<body>
+<main id="app" aria-live="polite"></main>
+
+<script>
+const DIMS = {
+  K:{name:"기능", verb:"쓸 줄 안다", color:"#2855de", grad:"linear-gradient(90deg,#2855de,#5b8cf5)"},
+  C:{name:"비판", verb:"따져 본다", color:"#6d5ce8", grad:"linear-gradient(90deg,#6d5ce8,#a596f7)"},
+  E:{name:"윤리", verb:"책임진다", color:"#0f9fb5", grad:"linear-gradient(90deg,#0f9fb5,#5fd3e0)"}
+};
+
+const QS = [
+  {d:"K", t:"검색어를 바꿔 가며\n원하는 정보를 빠르게 찾을 수 있다."},
+  {d:"C", t:"인터넷에서 정보를 보면\n누가 썼는지(출처)부터 확인한다."},
+  {d:"E", t:"다른 사람의 사진·글을 쓸 때\n출처를 밝히고 저작권을 지킨다."},
+  {d:"K", t:"구글 문서·패들렛 같은 도구로\n친구와 함께 작업할 수 있다."},
+  {d:"C", t:"AI 답변이나 인기 많은 글도\n사실인지 따로 확인해 본다."},
+  {d:"E", t:"나와 친구의 개인정보를\n함부로 올리지 않는다."}
+];
+
+const ICONS = {
+  star:'<path d="M12 3l2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.3l6-.8z"/>',
+  search:'<circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5.5 5.5"/>',
+  pen:'<path d="M4 20l1.2-4.6L15.8 4.8a2 2 0 012.8 0l.6.6a2 2 0 010 2.8L8.6 18.8z"/><path d="M13.5 7l3.5 3.5"/>',
+  shield:'<path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6z"/><path d="M8.8 12l2.3 2.3 4.2-4.6"/>',
+  compass:'<circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',
+  check:'<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8.5 12.2l2.4 2.4 4.7-5"/>',
+  heart:'<path d="M12 20s-7.5-4.6-7.5-10.1A4.3 4.3 0 0112 7.3a4.3 4.3 0 017.5 2.6C19.5 15.4 12 20 12 20z"/>',
+  sprout:'<path d="M12 21v-8"/><path d="M12 13c0-4-3-6.5-7.5-6.5 0 4.2 3 6.5 7.5 6.5z"/><path d="M12 11c0-3.4 2.6-5.6 6.5-5.6 0 3.6-2.6 5.6-6.5 5.6z"/>',
+  spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>'
+};
+const svg = (n, c, w=1.9) => `<svg viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]}</svg>`;
+
+const TYPES = {
+  "111":{name:"균형 잡힌 디지털 시민", icon:"star", g:["#3f6ff0","#8b6cf3"], soft:"#ece9ff",
+    desc:"잘 쓰고, 잘 따지고, 책임까지 챙기는 완성형이에요.",
+    tags:["#올라운더","#디지털멘토","#믿고보는정보"],
+    tip:"친구들에게 출처 확인법이나 협업 도구 쓰는 법을 알려 주는 ‘디지털 멘토’가 되어 보세요."},
+  "110":{name:"날카로운 디지털 탐정", icon:"search", g:["#2855de","#36a9f0"], soft:"#e6f1ff",
+    desc:"원하는 정보를 빠르게 찾아내고, 진짜인지 가려내요.",
+    tags:["#검색왕","#팩트체크","#조사과제담당"],
+    tip:"공유하기 전에 ‘출처 표시했나? 개인정보는 없나?’를 한 번 더 체크해 보세요."},
+  "101":{name:"든든한 디지털 메이커", icon:"pen", g:["#5468f2","#a68cf6"], soft:"#eeebff",
+    desc:"도구로 뚝딱 만들어 내고, 예절과 저작권도 잘 지켜요.",
+    tags:["#제작담당","#협업요정","#매너장착"],
+    tip:"자료를 넣기 전에 ‘누가, 어떻게 만든 정보지?’를 한 번 따져 보면 결과물이 더 믿음직해져요."},
+  "011":{name:"신중한 디지털 수호자", icon:"shield", g:["#1e2f8f","#4f7cf0"], soft:"#e7ecfb",
+    desc:"쉽게 믿지 않고, 온라인에서도 책임 있게 행동해요.",
+    tags:["#안전장치","#신중파","#개인정보지킴"],
+    tip:"새 협업 도구를 하나씩 직접 써 보세요. 신중함에 활용력이 더해지면 완성형이에요."},
+  "100":{name:"손 빠른 디지털 탐험가", icon:"compass", g:["#1593e6","#5fd3e0"], soft:"#e3f5fb",
+    desc:"새로운 앱과 도구를 두려움 없이 빠르게 익혀요.",
+    tags:["#얼리어답터","#적응력갑","#일단해봄"],
+    tip:"속도만큼 확인도 중요해요. 출처 확인 한 번, 저작권 체크 한 번을 습관으로!"},
+  "010":{name:"의심 많은 팩트체커", icon:"check", g:["#6d5ce8","#b4a6fa"], soft:"#f0edff",
+    desc:"‘이거 진짜야?’를 먼저 묻는 비판적 사고의 소유자예요.",
+    tags:["#진짜야?","#가짜뉴스필터","#비교분석"],
+    tip:"검증한 내용을 직접 만들어 공유해 보세요. 활용력과 예절까지 챙기면 영향력이 커져요."},
+  "001":{name:"따뜻한 디지털 지킴이", icon:"heart", g:["#8b6cf3","#e58fd8"], soft:"#f8ebfb",
+    desc:"온라인에서도 배려하고 규칙을 지키는 따뜻한 시민이에요.",
+    tags:["#온라인매너","#저작권지킴","#배려왕"],
+    tip:"검색어 바꿔 보기, 여러 자료 비교하기부터 시작해 보세요."},
+  "000":{name:"성장 중인 디지털 새싹", icon:"sprout", g:["#0f9fb5","#7fe0c8"], soft:"#e3f7f3",
+    desc:"이제 막 디지털 리터러시를 키워 가는 출발점이에요.",
+    tags:["#성장중","#가능성무한","#오늘부터시작"],
+    tip:"오늘부터 하루 한 번 ‘이 정보 누가 썼지?’를 확인해 보세요. 작은 습관이 큰 변화를 만들어요."}
+};
+
+/* ---------- 3D 느낌 캐릭터 (SVG) ---------- */
+const BODY = {
+  "111":["#c3d0ff","#6f8cf7","#3a52d6"], "110":["#bfe3ff","#4f9cf2","#2160c9"],
+  "101":["#ddd3ff","#9682f2","#6450d1"], "011":["#c6cff5","#5b6fd0","#2c3a96"],
+  "100":["#c8f4fb","#3fbfe2","#1786b5"], "010":["#e6dcff","#a592f6","#6f58d8"],
+  "001":["#ffe0f3","#f096d3","#c95fae"], "000":["#cff8ec","#55d4b3","#219a82"]
+};
+function lg(id,a,b,x1=0,y1=0,x2=0,y2=1){return `<linearGradient id="${id}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient>`}
+function acc(key,u){
+  switch(key){
+    case "111": return `<defs>${lg(u+"g","#fff1a8","#f2a900")}</defs>
+      <g transform="rotate(-8 100 50)">
+        <path d="M72 70 L76 38 L90 54 L100 30 L110 54 L124 38 L128 70 Z" fill="url(#${u}g)" stroke="#d99400" stroke-width="1.5" stroke-linejoin="round"/>
+        <rect x="71" y="64" width="58" height="10" rx="5" fill="#f5b800"/>
+        <circle cx="100" cy="69" r="4" fill="#ff6b8b"/><circle cx="84" cy="69" r="3" fill="#6fd3ff"/><circle cx="116" cy="69" r="3" fill="#6fd3ff"/>
+        <path d="M80 50 L84 44" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+      </g>`;
+    case "110": return `<defs>${lg(u+"h","#c48a5c","#7a4a2a")}<radialGradient id="${u}gl" cx=".35" cy=".35" r=".7"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#a9dcff"/></radialGradient></defs>
+      <path d="M60 72 C62 34 138 34 140 72 Z" fill="url(#${u}h)"/>
+      <ellipse cx="100" cy="72" rx="48" ry="9" fill="#6b3f22"/>
+      <path d="M62 64 C80 58 120 58 138 64" stroke="#e3b27f" stroke-width="5" fill="none"/>
+      <path d="M78 46 C82 40 90 38 96 38" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".45" fill="none"/>
+      <line x1="164" y1="136" x2="180" y2="154" stroke="#6b4a2a" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="152" cy="122" r="18" fill="url(#${u}gl)" stroke="#3a3f55" stroke-width="5"/>
+      <path d="M143 115 C146 111 150 110 154 110" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none"/>`;
+    case "101": return `<defs>${lg(u+"b","#ff9aa8","#e2475f")}${lg(u+"p","#ffe17a","#f5b400",0,0,1,0)}</defs>
+      <ellipse cx="96" cy="64" rx="44" ry="15" fill="url(#${u}b)" transform="rotate(-12 96 64)"/>
+      <circle cx="84" cy="50" r="5" fill="#e2475f"/>
+      <ellipse cx="80" cy="60" rx="14" ry="4" fill="#fff" opacity=".4" transform="rotate(-12 80 60)"/>
+      <g transform="rotate(35 160 120)">
+        <rect x="150" y="88" width="16" height="52" rx="3" fill="url(#${u}p)"/>
+        <rect x="150" y="88" width="16" height="9" rx="3" fill="#ff8fa3"/>
+        <path d="M150 140 L158 158 L166 140 Z" fill="#f6d7b0"/><path d="M155.5 152 L158 158 L160.5 152 Z" fill="#3a3f55"/>
+      </g>`;
+    case "011": return `<defs>${lg(u+"s","#ffffff","#a9b8ef")}</defs>
+      <g transform="translate(118 92)">
+        <path d="M24 0 L48 8 V28 C48 44 37 54 24 60 C11 54 0 44 0 28 V8 Z" fill="url(#${u}s)" stroke="#fff" stroke-width="3"/>
+        <path d="M24 6 L42 12 V28 C42 40 34 48 24 53 Z" fill="#8597e0" opacity=".35"/>
+        <path d="M13 30 L21 38 L36 21" stroke="#2c3a96" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>`;
+    case "100": return `<defs>${lg(u+"c","#ffc27a","#f2852b")}</defs>
+      <path d="M62 74 C64 36 136 36 138 74 Z" fill="url(#${u}c)"/>
+      <ellipse cx="134" cy="75" rx="28" ry="7" fill="#d96a17"/>
+      <circle cx="100" cy="42" r="5" fill="#d96a17"/>
+      <path d="M78 52 C82 46 90 44 96 44" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".5" fill="none"/>
+      <circle cx="154" cy="128" r="16" fill="#f5b800" stroke="#d99400" stroke-width="2"/>
+      <circle cx="154" cy="128" r="11" fill="#fff"/>
+      <path d="M154 119 L157 128 L154 130 Z" fill="#ff4d6d"/><path d="M154 137 L151 128 L154 126 Z" fill="#3a3f55"/>`;
+    case "010": return `
+      <g fill="rgba(255,255,255,.25)" stroke="#2a2f45" stroke-width="4">
+        <circle cx="82" cy="112" r="14"/><circle cx="118" cy="112" r="14"/></g>
+      <path d="M96 110 C98 107 102 107 104 110" stroke="#2a2f45" stroke-width="4" fill="none"/>
+      <path d="M76 104 C78 101 81 100 84 100" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      <path d="M150 34 a22 22 0 1 1 -14 39 l-10 6 l4 -11 a22 22 0 0 1 20 -34z" fill="#fff"/>
+      <path d="M141 54 L149 62 L163 46" stroke="#6f58d8" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+    case "001": return `<defs>${lg(u+"r","#ff9fb4","#f0466b")}</defs>
+      <path d="M154 150 C134 136 128 124 132 114 C136 104 150 104 154 114 C158 104 172 104 176 114 C180 124 174 136 154 150 Z" fill="url(#${u}r)"/>
+      <ellipse cx="141" cy="115" rx="5" ry="3" fill="#fff" opacity=".75" transform="rotate(-30 141 115)"/>
+      <path d="M58 56 C58 52 62 50 64 53 C66 50 70 52 70 56 C70 60 64 64 64 64 C64 64 58 60 58 56Z" fill="#ff7aa0" opacity=".85"/>`;
+    case "000": return `<defs>${lg(u+"l","#a8f5b4","#2fb76a",0,0,1,1)}</defs>
+      <path d="M100 66 C100 56 100 48 101 40" stroke="#2fa35e" stroke-width="5" stroke-linecap="round" fill="none"/>
+      <path d="M100 46 C88 26 66 28 62 36 C70 50 88 52 100 46 Z" fill="url(#${u}l)"/>
+      <path d="M102 42 C110 22 134 20 140 28 C134 44 114 48 102 42 Z" fill="url(#${u}l)"/>
+      <path d="M70 37 C78 36 86 39 92 43" stroke="#fff" stroke-width="2" opacity=".6" fill="none" stroke-linecap="round"/>`;
+  }
+  return "";
+}
+let _cid = 0;
+function character(key){
+  const u = "c"+(++_cid), [l,m,d] = BODY[key];
+  const sideArm = (key==="011") ? "" : ""; // 모든 유형 동일한 팔
+  return `<svg viewBox="0 0 200 200" aria-hidden="true">
+    <defs>
+      <radialGradient id="${u}body" cx=".36" cy=".3" r=".8">
+        <stop offset="0" stop-color="#ffffff"/><stop offset=".18" stop-color="${l}"/>
+        <stop offset=".62" stop-color="${m}"/><stop offset="1" stop-color="${d}"/></radialGradient>
+      <radialGradient id="${u}limb" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="${l}"/><stop offset="1" stop-color="${d}"/></radialGradient>
+      <radialGradient id="${u}sh" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#0b1440" stop-opacity=".35"/><stop offset="1" stop-color="#0b1440" stop-opacity="0"/></radialGradient>
+    </defs>
+    <ellipse cx="100" cy="182" rx="60" ry="11" fill="url(#${u}sh)"/>
+    <ellipse cx="80" cy="168" rx="15" ry="9" fill="url(#${u}limb)"/>
+    <ellipse cx="120" cy="168" rx="15" ry="9" fill="url(#${u}limb)"/>
+    <ellipse cx="45" cy="124" rx="11" ry="15" fill="url(#${u}limb)" transform="rotate(20 45 124)"/>
+    <ellipse cx="155" cy="124" rx="11" ry="15" fill="url(#${u}limb)" transform="rotate(-20 155 124)"/>
+    <ellipse cx="100" cy="116" rx="60" ry="55" fill="url(#${u}body)"/>
+    <ellipse cx="76" cy="84" rx="17" ry="9" fill="#fff" opacity=".55" transform="rotate(-25 76 84)"/>
+    <ellipse cx="62" cy="100" rx="4" ry="3" fill="#fff" opacity=".5"/>
+    <ellipse cx="82" cy="112" rx="7" ry="9" fill="#1d2135"/><ellipse cx="118" cy="112" rx="7" ry="9" fill="#1d2135"/>
+    <circle cx="84.5" cy="108.5" r="2.8" fill="#fff"/><circle cx="120.5" cy="108.5" r="2.8" fill="#fff"/>
+    <circle cx="80" cy="116" r="1.3" fill="#fff" opacity=".8"/><circle cx="116" cy="116" r="1.3" fill="#fff" opacity=".8"/>
+    <ellipse cx="66" cy="129" rx="9" ry="5" fill="#ff7c9c" opacity=".45"/><ellipse cx="134" cy="129" rx="9" ry="5" fill="#ff7c9c" opacity=".45"/>
+    <path d="M93 128 C96 133 104 133 107 128" stroke="#1d2135" stroke-width="3" fill="none" stroke-linecap="round"/>
+    ${acc(key,u)}
+  </svg>`;
+}
+
+const ORDER = ["111","110","101","011","100","010","001","000"];
+const HIGH = 75; // 100점 환산, 영역별 강점 기준
+
+let st = {view:"intro", i:0, ans:Array(QS.length).fill(null)};
+const app = document.getElementById("app");
+const render = () => st.view==="intro" ? intro() : st.view==="quiz" ? quiz() : result();
+
+function intro(){
+  app.innerHTML = `
+  <section class="glass intro fade">
+    <span class="badge"><i></i>Ch.10 수업매체 · 디지털 리터러시</span>
+    <div class="hero" aria-hidden="true">
+      <span class="float f1">쓸 줄 안다</span>
+      <span class="float f2">따져 본다</span>
+      <span class="float f3">책임진다</span>
+      <div class="orb"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M12 2.5c.5 4.6 2.6 7.6 7.5 9.5-4.9 1.9-7 4.9-7.5 9.5-.5-4.6-2.6-7.6-7.5-9.5 4.9-1.9 7-4.9 7.5-9.5z"/><path fill="#fff" opacity=".7" d="M19 2.5c.2 1.5.8 2.3 2.2 2.8-1.4.5-2 1.3-2.2 2.8-.2-1.5-.8-2.3-2.2-2.8 1.4-.5 2-1.3 2.2-2.8z"/></svg></div>
+    </div>
+    <h1>나는 어떤<br><span>디지털 시민</span>일까?</h1>
+    <p class="lead">6개 질문에 답하고<br>나의 디지털 리터러시 유형을 확인해 보세요.</p>
+    <div class="meta"><span>6문항</span><span>1분</span><span>정답 없음</span></div>
+    <button class="btn" id="go">시작하기</button>
+  </section>`;
+  go.onclick = () => { st.view="quiz"; st.i=0; render(); };
+}
+
+function quiz(){
+  const q = QS[st.i], d = DIMS[q.d], cur = st.ans[st.i];
+  app.innerHTML = `
+  <section class="glass quiz">
+    <div class="qtop">
+      <button class="back" id="back">← 이전</button>
+      <div class="steps" aria-label="${st.i+1} / ${QS.length}">
+        ${QS.map((_,k)=>`<i class="${k<st.i?"done":k===st.i?"now":""}"></i>`).join("")}
+      </div>
+    </div>
+    <div class="fade" key="${st.i}">
+      <div class="qtag" style="color:${d.color}"><b style="background:${d.color}">${st.i+1}</b>${d.name} · ${d.verb}</div>
+      <p class="q">${q.t.replace("\n","<br>")}</p>
+      <div class="scale" role="radiogroup" aria-label="1 매우 아니다 ~ 5 매우 그렇다">
+        ${[1,2,3,4,5].map(v=>`<button class="pt s${v} ${cur===v?"on":""}" role="radio" aria-checked="${cur===v}"
+          aria-label="${["매우 아니다","아니다","보통이다","그렇다","매우 그렇다"][v-1]}" data-v="${v}"></button>`).join("")}
+      </div>
+      <div class="ends"><span>매우 아니다</span><span>매우 그렇다</span></div>
+      <p class="hint">나와 가까운 쪽을 눌러 주세요</p>
+    </div>
+  </section>`;
+  back.onclick = () => { st.i===0 ? st.view="intro" : st.i--; render(); };
+  app.querySelectorAll(".pt").forEach(b => b.onclick = () => {
+    st.ans[st.i] = +b.dataset.v;
+    app.querySelectorAll(".pt").forEach(x=>x.classList.remove("on")); b.classList.add("on");
+    setTimeout(() => {
+      if(st.i < QS.length-1){ st.i++; } else { st.view="result"; window.scrollTo({top:0}); }
+      render();
+    }, 220);
+  });
+}
+
+function scores(){
+  const s={K:0,C:0,E:0}, n={K:0,C:0,E:0};
+  QS.forEach((q,i)=>{ s[q.d]+=st.ans[i]||1; n[q.d]++; });
+  for(const k in s) s[k] = Math.round((s[k]-n[k])/(n[k]*4)*100);
+  return s;
+}
+
+function result(){
+  const s = scores();
+  const key = ["K","C","E"].map(k => s[k]>=HIGH ? "1":"0").join("");
+  const t = TYPES[key];
+  app.innerHTML = `
+  <div class="fade">
+    <section class="tcard" style="background:linear-gradient(150deg,${t.g[0]},${t.g[1]})">
+      <div class="tlabel">나의 디지털 리터러시 유형</div>
+      <div class="tchar">${character(key)}</div>
+      <div class="tname">${t.name}</div>
+      <p class="tdesc">${t.desc}</p>
+      <div class="tags">${t.tags.map(x=>`<span>${x}</span>`).join("")}</div>
+      <div class="meters">
+        ${["K","C","E"].map(k=>`
+          <div class="m">
+            <div class="mh"><span><b>${DIMS[k].name}</b><small>${DIMS[k].verb}</small></span><em style="color:${DIMS[k].color}">${s[k]}</em></div>
+            <div class="track"><div class="fill" data-w="${Math.max(s[k],3)}" style="background:${DIMS[k].grad}"></div></div>
+          </div>`).join("")}
+      </div>
+    </section>
+
+    <section class="glass tip">
+      <h3>${svg("sprout","#2855de",2).replace('<svg','<svg width="16" height="16"')}이렇게 키워 봐요</h3>
+      <p>${t.tip}</p>
+    </section>
+
+    <div class="row">
+      <button class="btn light" id="again">다시 하기</button>
+      <button class="btn" id="copy">결과 복사하기</button>
+    </div>
+    <p class="note" id="note"></p>
+
+    <section class="glass all">
+      <h2>8가지 유형 둘러보기</h2>
+      <div class="grid">
+        ${ORDER.map(k=>{ const y=TYPES[k], me=k===key;
+          const has=["기능","비판","윤리"].filter((_,j)=>k[j]==="1");
+          return `<div class="mini ${me?"me":""}">
+            <div class="mi" style="background:${y.soft}">${character(k)}</div>
+            <b>${y.name}</b>
+            <small>${me?'<span class="me-tag">나의 유형</span>':(has.length?has.join(" · ")+" 강점":"모두 성장 중")}</small>
+          </div>`;}).join("")}
+      </div>
+    </section>
+    <p class="foot">영역별 2문항(5점 척도)을 100점으로 환산해 ${HIGH}점 이상을 강점으로 봤어요.<br>수업 활동용 자기 점검 도구예요.</p>
+  </div>`;
+  requestAnimationFrame(()=>setTimeout(()=>app.querySelectorAll(".fill").forEach(f=>f.style.width=f.dataset.w+"%"),80));
+  again.onclick = () => { st={view:"intro",i:0,ans:Array(QS.length).fill(null)}; render(); window.scrollTo({top:0}); };
+  copy.onclick = async () => {
+    const txt = `[디지털 리터러시 셀프 진단]\n나의 유형: ${t.name} ${t.tags.join(" ")}\n기능 ${s.K} · 비판 ${s.C} · 윤리 ${s.E}`;
+    try{ await navigator.clipboard.writeText(txt); note.textContent="복사했어요! 패들렛에 붙여 넣어 공유해 보세요."; }
+    catch(e){ note.textContent="복사가 안 되면 화면을 캡처해서 공유해 주세요."; }
+  };
+}
+render();
+</script>
+</body>
+</html>
